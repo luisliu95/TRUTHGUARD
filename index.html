@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+  <title>真话机 TruthGuard · 事实与观点核查</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#3b82f6',
+              700: '#1d4ed8',
+              900: '#0b2559'
+            },
+            gold: '#d6b25e',
+            night: {
+              900: '#0b1020',
+              800: '#11162a',
+              700: '#1a2140',
+              600: '#222a4f'
+            },
+            verdict: {
+              true: '#16a34a',
+              partial: '#f59e0b',
+              false: '#dc2626',
+              unknown: '#6b7280'
+            }
+          },
+          boxShadow: {
+            card: '0 4px 22px rgba(0,0,0,0.06)'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%230b1020'/><text x='50' y='62' text-anchor='middle' font-size='48' fill='%23d6b25e' font-family='Arial, Helvetica, sans-serif'>TG</text></svg>">
+  <style>
+    .safe-area-inset-bottom { padding-bottom: env(safe-area-inset-bottom); }
+    /* 防止切换页面时因滚动条出现/消失导致的横向抖动 */
+    html { scrollbar-gutter: stable; }
+    body { overflow-y: scroll; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-100" style="background: radial-gradient(1200px 800px at 20% -10%, #2b375f 0%, #121829 40%, #0b1020 100%);">
+  <!-- Header / Branding -->
+  <header class="sticky top-0 z-20 bg-transparent">
+    <div class="max-w-xl mx-auto px-4 pt-4 pb-2">
+      <div class="flex items-baseline justify-between">
+        <div>
+          <div class="text-2xl tracking-wider font-serif font-semibold">真话机</div>
+          <div class="text-[11px] tracking-[0.2em] text-gold/80">TRUTHGUARD</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="openSubmit" class="px-3 py-1.5 rounded-full bg-gold/90 text-black text-sm shadow hover:bg-gold">
+            <i class="fa-solid fa-magnifying-glass"></i> 核查
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Pages -->
+  <main id="pages" class="flex-1 max-w-xl mx-auto w-full px-4 pt-2 pb-28">
+    <!-- 档案馆 -->
+    <section id="page-archive" class="">
+      <h2 class="sr-only">真相档案馆</h2>
+      <div class="mb-3">
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gold"></i>
+          <input id="archiveSearch" type="search" placeholder="搜索观点、链接或关键词…" class="w-full pl-9 pr-10 py-2.5 rounded-full bg-white text-slate-800 border border-white/20 outline-none" />
+        </div>
+      </div>
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm text-slate-300">热门观点榜</div>
+        <div>
+          <select id="filterCategory" class="text-sm bg-night-700/60 border border-white/10 text-slate-100 rounded-lg px-2 py-1">
+            <option value="">全部分类</option>
+            <option>健康</option>
+            <option>科技</option>
+            <option>社会</option>
+            <option>娱乐</option>
+            <option>财经</option>
+          </select>
+        </div>
+      </div>
+      <div id="claimList" class="space-y-3"></div>
+    </section>
+
+    <!-- 真相追踪 -->
+    <section id="page-submit" class="hidden">
+      <h2 class="mb-1 text-3xl md:text-4xl font-serif font-semibold text-slate-100 text-center">AI 事实核查</h2>
+      <p class="text-slate-300 text-sm mb-3 text-center">基于权威数据源，一键验证真伪</p>
+      <form id="submitForm" class="space-y-3">
+        <div class="relative">
+          <i class="fa-regular fa-compass absolute left-4 top-1/2 -translate-y-1/2 text-gold"></i>
+          <input id="inputText" class="w-full pl-10 pr-14 py-3 rounded-full bg-white text-slate-800 border border-white/20 outline-none" placeholder="请输入您需要验证的观点" />
+          <button type="submit" class="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black text-white grid place-items-center"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 p-2 cursor-not-allowed opacity-60">
+            <i class="fa-regular fa-image"></i>
+            <input id="inputImage" type="file" accept="image/*" class="hidden">
+            <span class="text-sm">上传截图</span>
+          </label>
+          <label class="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 p-2 cursor-not-allowed opacity-60">
+            <i class="fa-brands fa-youtube"></i>
+            <input id="inputVideoTitle" type="text" class="hidden">
+            <span class="text-sm">视频链接</span>
+          </label>
+        </div>
+        <p class="text-xs text-slate-400 -mt-1">目前只支持文本内容核查，其他上传形式还在开发中~</p>
+        
+        <!-- 示例案例 -->
+        <div class="flex flex-col gap-3 mt-3">
+          <p class="text-sm font-semibold text-gold">试试这些热门问题：</p>
+          <div class="grid grid-cols-1 gap-2">
+            <button type="button" class="example-case px-4 py-2 text-sm rounded-full bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20 transition-colors font-medium" data-text="吃胡萝卜能治近视吗？">
+              吃胡萝卜能治近视吗？
+            </button>
+            <button type="button" class="example-case px-4 py-2 text-sm rounded-full bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20 transition-colors font-medium" data-text="吃葡萄不吐葡萄皮会得阑尾炎吗？">
+              吃葡萄不吐葡萄皮会得阑尾炎吗？
+            </button>
+          </div>
+        </div>
+        <!-- Analysis panel -->
+        <div id="analysisPanel" class="hidden mt-2">
+          <div class="bg-white/95 text-slate-800 rounded-xl border border-white/10 shadow-card p-5 text-center">
+            <div class="mx-auto w-10 h-10 rounded-full border-2 border-slate-300/50 border-t-[2px] border-t-[#d6b25e] animate-spin"></div>
+            <div class="mt-2 text-base font-medium">AI 正在努力分析中…</div>
+            <div class="mt-1 text-xs text-slate-500">请稍等，真话机正在为您揭开真相</div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-400 hidden">提示：结论由 AI 生成，仅供参考。</p>
+      </form>
+
+      <div id="submitResult" class="hidden mt-4 p-3 rounded-xl bg-white/95 text-slate-800 border border-white/10 shadow-card"></div>
+    </section>
+
+    <!-- 我的真话单 -->
+    <section id="page-subs" class="hidden">
+      <div class="mb-2 flex items-center justify-between">
+        <h2 class="text-base font-semibold text-slate-100">我的真话单</h2>
+        <button id="clearHistoryBtn" class="text-xs text-slate-300 hover:text-white border border-white/10 px-2 py-1 rounded-lg">清空记录</button>
+      </div>
+      <div id="subsList" class="space-y-3"></div>
+      <p id="subsEmpty" class="text-sm text-slate-400">还没有核查记录😊~试着输入你想验证的观点，AI 会帮你核查🧠，并把结果保存在这里~</p>
+    </section>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="safe-area-inset-bottom fixed bottom-0 left-0 right-0 bg-transparent">
+    <div class="max-w-xl mx-auto px-4 pb-3">
+      <div class="grid grid-cols-3 text-sm bg-white/5 backdrop-blur border border-white/10 rounded-2xl overflow-hidden">
+        <button data-tab="archive" class="tab-btn px-4 py-3 flex flex-col items-center text-gold">
+          <i class="fa-solid fa-book text-base"></i>
+          <span>真相档案馆</span>
+        </button>
+        <button data-tab="submit" class="tab-btn px-4 py-3 flex flex-col items-center text-slate-300">
+          <i class="fa-solid fa-magnifying-glass text-base"></i>
+          <span>真相追踪</span>
+        </button>
+        <button data-tab="subs" class="tab-btn px-4 py-3 flex flex-col items-center text-slate-300">
+          <i class="fa-regular fa-bell text-base"></i>
+          <span>我的真话单</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Detail Modal -->
+  <dialog id="detailModal" class="rounded-xl p-0 w-full max-w-xl">
+    <div class="p-4 border-b border-white/10 bg-night-800 text-slate-100 flex items-center justify-between">
+      <div class="font-semibold">观点详情</div>
+      <button id="closeDetail" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="p-4 space-y-3 bg-white/95 text-slate-800" id="detailBody"></div>
+  </dialog>
+
+
+
+  <script src="./mock-data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
+
+
