@@ -306,18 +306,31 @@
       return;
     }
 
-    // Determine API endpoint based on settings
-    const useLocalProxy = localStorage.getItem('use_local_proxy') === 'true';
-    const backendBase = localStorage.getItem('backend_base') || 'http://localhost:8000';
-    let apiUrl;
+    // Direct API call to Volcano Ark
+    const apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
     
-    if (useLocalProxy) {
-      apiUrl = 'http://localhost:3000/api/chat';
-    } else if (backendBase) {
-      apiUrl = `${backendBase}/api/chat`;
-    } else {
-      apiUrl = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
-    }
+    // System prompt to ensure structured JSON response
+    const systemPrompt = `仅输出 JSON，且字段固定如下，不要输出多余文本、前后缀或代码块围栏：
+{
+  "conclusion": "string",
+  "verdict": "true|partial|false|unknown",
+  "confidence": 0-100,
+  "evidence": [
+    {"source": "string", "url": "string", "excerpt": "string"}
+  ],
+  "reasoning": "string"
+}
+
+规范要求：
+- conclusion：将用户的问题改写为肯定句结论
+- verdict 取值说明：
+  - true：结论为真；
+  - partial：部分为真或条件成立；
+  - false：结论为假；
+  - unknown：无法证伪/证实或证据不足。
+- confidence：给 0–100 的整数，代表对判断的确信程度
+- evidence：列出 1–5 条可核查来源，优先权威机构/主流媒体/学术来源
+- reasoning：用 30–120 字中文，概括关键判断链条，不重复 evidence 摘要`;
 
     // Real API call with timeout & abort
     const controller = new AbortController();
@@ -328,7 +341,13 @@
         'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ model: modelId, messages: [{ role: 'user', content: text }] }),
+      body: JSON.stringify({ 
+        model: modelId, 
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: text }
+        ] 
+      }),
       signal: controller.signal
     })
     .then(res => res.json())
@@ -443,6 +462,32 @@
       const verdict = score > 80 ? 'true' : score > 60 ? 'partial' : score > 50 ? 'unknown' : 'false';
       finish(score, verdict);
     });
+  });
+
+  // 示例案例点击处理
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('example-case')) {
+      const text = e.target.getAttribute('data-text');
+      document.getElementById('inputText').value = text;
+      
+      // 隐藏所有示例案例和标题
+      document.querySelectorAll('.example-case').forEach(btn => {
+        btn.style.display = 'none';
+      });
+      // 隐藏"试试这些热门问题"标题
+      const exampleSection = e.target.closest('.flex.flex-col.gap-3.mt-3');
+      if (exampleSection) {
+        const title = exampleSection.querySelector('p.text-sm.font-semibold.text-gold');
+        if (title) {
+          title.style.display = 'none';
+        }
+      }
+      
+      // 自动提交表单
+      setTimeout(() => {
+        document.getElementById('submitForm').dispatchEvent(new Event('submit', { bubbles: true }));
+      }, 100);
+    }
   });
 
   // Init

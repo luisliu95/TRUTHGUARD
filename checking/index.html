@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -105,7 +106,6 @@
           <input id="inputText" class="w-full pl-10 pr-14 py-3 rounded-full bg-white text-slate-800 border border-white/20 outline-none" placeholder="请输入您需要验证的观点" />
           <button type="submit" class="absolute right-1 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black text-white grid place-items-center"><i class="fa-solid fa-magnifying-glass"></i></button>
         </div>
-        <p class="text-xs text-slate-400 -mt-1">目前只支持文本内容核查，其他上传形式还在开发中~</p>
         <div class="grid grid-cols-2 gap-2">
           <label class="flex items-center justify-center gap-2 rounded-xl bg-white/5 border border-white/10 p-2 cursor-not-allowed opacity-60">
             <i class="fa-regular fa-image"></i>
@@ -118,6 +118,20 @@
             <span class="text-sm">视频链接</span>
           </label>
         </div>
+        <p class="text-xs text-slate-400 -mt-1">目前只支持文本内容核查，其他上传形式还在开发中~</p>
+        
+        <!-- 示例案例 -->
+        <div class="flex flex-col gap-3 mt-3">
+          <p class="text-sm font-semibold text-gold">试试这些热门问题：</p>
+          <div class="grid grid-cols-1 gap-2">
+            <button type="button" class="example-case px-4 py-2 text-sm rounded-full bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20 transition-colors font-medium" data-text="吃胡萝卜能治近视吗？">
+              吃胡萝卜能治近视吗？
+            </button>
+            <button type="button" class="example-case px-4 py-2 text-sm rounded-full bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20 transition-colors font-medium" data-text="吃葡萄不吐葡萄皮会得阑尾炎吗？">
+              吃葡萄不吐葡萄皮会得阑尾炎吗？
+            </button>
+          </div>
+        </div>
         <!-- Analysis panel -->
         <div id="analysisPanel" class="hidden mt-2">
           <div class="bg-white/95 text-slate-800 rounded-xl border border-white/10 shadow-card p-5 text-center">
@@ -126,7 +140,7 @@
             <div class="mt-1 text-xs text-slate-500">请稍等，真话机正在为您揭开真相</div>
           </div>
         </div>
-        <p class="text-xs text-slate-400">提示：结论由 AI 生成，仅供参考。</p>
+        <p class="text-xs text-slate-400 hidden">提示：结论由 AI 生成，仅供参考。</p>
       </form>
 
       <div id="submitResult" class="hidden mt-4 p-3 rounded-xl bg-white/95 text-slate-800 border border-white/10 shadow-card"></div>
@@ -172,37 +186,7 @@
     <div class="p-4 space-y-3 bg-white/95 text-slate-800" id="detailBody"></div>
   </dialog>
 
-  <!-- Settings Modal -->
-  <dialog id="settingsModal" class="rounded-xl p-0 w-full max-w-xl">
-    <div class="p-4 border-b border-white/10 bg-night-800 text-slate-100 flex items-center justify-between">
-      <div class="font-semibold">API 设置</div>
-      <button id="closeSettings" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <form id="settingsForm" class="p-4 space-y-3 bg-white/95 text-slate-800">
-      <div>
-        <label class="text-sm text-slate-700">API Key</label>
-        <input id="arkApiKey" type="password" class="w-full mt-1 rounded-lg border border-slate-300 p-2" placeholder="填写火山方舟 ARK_API_KEY" />
-        <p class="text-xs text-slate-500 mt-1">建议使用环境变量；本地演示将暂存于浏览器（仅本机）。</p>
-      </div>
-      <div>
-        <label class="text-sm text-slate-700">Model ID</label>
-        <input id="arkModelId" class="w-full mt-1 rounded-lg border border-slate-300 p-2" placeholder="如 ep-xxxxxxxx 或 doubao-..." />
-        <p class="text-xs text-slate-500 mt-1">推荐填写端点 ID（以 ep- 开头）；或确保模型已为你的账号开通。</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <input id="useLocalProxy" type="checkbox" class="h-4 w-4" />
-        <label for="useLocalProxy" class="text-sm text-slate-700">使用本地代理（http://localhost:3000）</label>
-      </div>
-      <div>
-        <label class="text-sm text-slate-700">System Prompt（可选）</label>
-        <textarea id="arkSystemPrompt" rows="4" class="w-full mt-1 rounded-lg border border-slate-300 p-2" placeholder="为模型设置系统指令，例如输出格式或角色约束"></textarea>
-      </div>
-      <div class="flex justify-end gap-2">
-        <button type="button" id="cancelSettings" class="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-700">取消</button>
-        <button type="submit" class="px-3 py-1.5 rounded-lg bg-black text-white">保存</button>
-      </div>
-    </form>
-  </dialog>
+
 
   <script src="./mock-data.js"></script>
   <script src="./app.js"></script>
